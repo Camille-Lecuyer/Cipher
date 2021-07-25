@@ -1,9 +1,16 @@
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace cipher{
     public class Cipher{
 
-        Dictionary<char, char> alphabet = new Dictionary<char, char>();
+        Dictionary<char, char> alphabet;
+
+        public Cipher(){
+            alphabet = new Dictionary<char, char>();
+            populateAlphabet();
+        }
 
         void populateAlphabet(){
             alphabet.Add('A', 'A');
@@ -39,10 +46,32 @@ namespace cipher{
         }
 
         void knownShift(int shift){
-            foreach(char letter in alphabet.Keys){
-                
+            int a = 0;
+            for(int i = 0; i < alphabet.Keys.Count ; i++){
+                if(shift + i < 24){
+                    char key = alphabet.ElementAt(i).Key;
+                    char value = alphabet.ElementAt(i + shift).Value;
+                    alphabet.Remove(key);
+                    alphabet.Add(key, value);
+                }
+                else{
+                    char key = alphabet.ElementAt(i).Key;
+                    char value = alphabet.ElementAt(shift + a).Value;
+                    a++;
+                    alphabet.Remove(key);
+                    alphabet.Add(key, value);
+                }
             }
         }
 
+        public void printTranslation(string input, int shift){
+            char[] inputCharArray = input.ToUpper().ToCharArray();
+            string result = "";
+            knownShift(shift);
+            foreach(char letter in inputCharArray){
+                result += alphabet[letter];
+            }
+            Console.WriteLine(result);
+        }
     }
 }
